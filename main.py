@@ -6,10 +6,21 @@ from ultralytics import YOLO
 import shutil
 import os
 import uuid
+import gdown
 
 app = FastAPI()
-model = YOLO("cabcab.pt")
 
+# --- Cek dan unduh model jika belum ada ---
+model_path = "models/cabcab.pt"
+if not os.path.exists(model_path):
+    os.makedirs("models", exist_ok=True)
+    url = "https://drive.google.com/uc?id=1xpNWtJv-LYAbwqT1ezBbadUiKW8OplNd"
+    gdown.download(url, model_path, quiet=False)
+
+# --- Load model YOLO ---
+model = YOLO(model_path)
+
+# --- Setup statis dan template ---
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
